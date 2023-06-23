@@ -12,15 +12,15 @@
 #include "Nmea.h"
 
 class GPS : tty {
-	Nmea *nmea;
-	std::queue<std::shared_ptr<std::string>> mMsgs;
-	std::mutex mutex;
+  Nmea *nmea;
+  std::queue<std::shared_ptr<std::string>> mMsgs;
+  std::mutex mutex;
 public:
-	int on_message(std::shared_ptr<std::string> &msg) override;
-	bool checksum(const std::string &str) override;
-	explicit GPS(const std::string &device);
-	void run();
-	~GPS() override;
+  int on_message(std::shared_ptr<std::string> &msg) override;
+  bool checksum(const std::string &str) override;
+  explicit GPS(const std::string &device);
+  void run();
+  ~GPS() override;
 };
 
 #endif //GPS_UTILS_SRC_GPS_H

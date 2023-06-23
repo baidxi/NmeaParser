@@ -2,9 +2,9 @@
 #include "GPS.h"
 
 int main() {
-	auto gps = new GPS("/dev/ttyUSB0");
+  auto gps = new GPS("/dev/ttyUSB0");
 
-	gps->run();
+  gps->run();
 
-	return 0;
+  return 0;
 }

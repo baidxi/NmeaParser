@@ -37,6 +37,8 @@ Nmea::Nmea() {
   data.insert(make_pair("GLL", malloc(sizeof(gll))));
   data.insert(make_pair("GSV", malloc(sizeof(gsv))));
   data.insert(make_pair("GGA", malloc(sizeof(gga))));
+  data.insert(make_pair("GSA", malloc(sizeof (gsa))));
+  data.insert(make_pair("RMC", malloc(sizeof (rmc))));
 }
 
 Nmea::~Nmea() {
@@ -133,7 +135,19 @@ static void GNGLL_Process(shared_ptr<string> &msg, Nmea *nmea) {
   v->status = *tokens[6].c_str();
 }
 static void GPGSA_Process(shared_ptr<string> &msg, Nmea *nmea) {
+  vector<string> tokens = split_string(msg->c_str());
 
+  gsa *v = (gsa *)nmea->get("GSA");
+
+  v->select_mode = *tokens[1].c_str();
+  v->mode = *tokens[2].c_str();
+  v->pdop = strtod(tokens[15].c_str(), nullptr);
+  v->hdop = strtod(tokens[16].c_str(), nullptr);
+  v->vdop = strtod(tokens[17].c_str(), nullptr);
+
+  for (int i = 0; i < 12; ++i) {
+	v->id[i] = (uint8_t)strtol(tokens[i+3].c_str(), nullptr, 10);
+  }
 }
 static void BDGSV_Process(shared_ptr<string> &msg, Nmea *nmea) {
 
@@ -166,8 +180,8 @@ static void GPGSV_Process(shared_ptr<string> &msg, Nmea *nmea) {
   for (int i = 0; i < loop_count; ++i) {
 	index = 4 * (i + 1);
 	group->infos[i].sat_num = strtol(tokens[index + 0].c_str(), nullptr, 10);
-	group->infos[i].deg1 = strtol(tokens[index + 1].c_str(), nullptr, 10);
-	group->infos[i].deg2 = strtol(tokens[index + 2].c_str(), nullptr, 10);
+	group->infos[i].elevation = strtol(tokens[index + 1].c_str(), nullptr, 10);
+	group->infos[i].azimuth = strtol(tokens[index + 2].c_str(), nullptr, 10);
 	group->infos[i].snr = strtol(tokens[index + 3].c_str(), nullptr, 10);
   }
 }
@@ -179,5 +193,18 @@ static void GPTXT_Process(shared_ptr<string> &msg, Nmea *nmea) {
 }
 
 static void GNRMC_Process(shared_ptr<string> &msg, Nmea *nmea) {
+  auto tokens = split_string(msg->c_str());
+  rmc *v = (rmc *)nmea->get("RMC");
 
+  strncpy(v->time, tokens[1].c_str(), tokens[1].length());
+  v->status = *tokens[2].c_str();
+  v->lat = strtod(tokens[3].c_str(), nullptr);
+  v->ns = *tokens[4].c_str();
+  v->lon = strtod(tokens[5].c_str(), nullptr);
+  v->ew = *tokens[6].c_str();
+  v->speed = strtod(tokens[7].c_str(), nullptr);
+  v->deg = strtod(tokens[8].c_str(), nullptr);
+  v->date = (uint16_t)strtoul(tokens[9].c_str(), nullptr, 10);
+  v->magnetic_variation = strtod(tokens[10].c_str(), nullptr);
+  v->variation_ew = *tokens[11].c_str();
 }

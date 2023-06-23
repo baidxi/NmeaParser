@@ -28,8 +28,8 @@ struct vtg {
 
 struct gsv_info {
   uint32_t sat_num;
-  uint32_t deg1;
-  uint32_t deg2;
+  uint32_t elevation;
+  uint32_t azimuth;
   uint32_t snr;
 };
 
@@ -59,6 +59,29 @@ struct gga {
   char geoiadl_units;
   double age;
   uint16_t id;
+};
+
+struct gsa {
+  uint8_t select_mode;
+  uint8_t mode;
+  uint8_t id[12];
+  double pdop;
+  double hdop;
+  double vdop;
+};
+
+struct rmc {
+  char time[12];
+  char status;
+  double lat;
+  char ns;
+  double lon;
+  char ew;
+  double speed;
+  double deg;
+  uint16_t date;
+  double magnetic_variation;
+  char variation_ew;
 };
 
 class Nmea {

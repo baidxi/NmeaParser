@@ -11,19 +11,19 @@
 #include <functional>
 
 struct gll {
-  double lat;
+  double Latitude;
   char ns;
-  double lon;
+  double Longitude;
   char ew;
   char time[32];
   char status;
 };
 
 struct vtg {
-  double deg1;
-  double deg2;
-  double speed;
-  double kph;
+  double CourseTrue;
+  double CourseMagnetic;
+  double SpeedKnots;
+  double SpeedKph;
 };
 
 struct gsv_info {
@@ -46,9 +46,9 @@ struct gsv {
 
 struct gga {
   char time[32];
-  double lat;
+  double Latitude;
   char ns;
-  double lon;
+  double Longitude;
   char ew;
   uint8_t quality;
   uint8_t sat_num;
@@ -73,9 +73,9 @@ struct gsa {
 struct rmc {
   char time[32];
   char status;
-  double lat;
+  double Latitude;
   char ns;
-  double lon;
+  double Longitude;
   char ew;
   double speed;
   double deg;

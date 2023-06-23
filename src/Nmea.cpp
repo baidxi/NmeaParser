@@ -97,10 +97,10 @@ static void GNVTG_Process(std::shared_ptr<std::string> &msg, Nmea *nmea) {
 
   vtg *v = (vtg *)nmea->get("VTG");
 
-  v->deg1 = strtod(tokens[1].c_str(), nullptr);
-  v->deg2 = strtod(tokens[3].c_str(), nullptr);
-  v->speed = strtod(tokens[5].c_str(), nullptr);
-  v->kph = strtod(tokens[8].c_str(), nullptr);
+  v->CourseTrue = strtod(tokens[1].c_str(), nullptr);
+  v->CourseMagnetic = strtod(tokens[3].c_str(), nullptr);
+  v->SpeedKnots = strtod(tokens[5].c_str(), nullptr);
+  v->SpeedKph = strtod(tokens[8].c_str(), nullptr);
 }
 
 static void GNGGA_Process(shared_ptr<string> &msg, Nmea *nmea) {
@@ -109,9 +109,9 @@ static void GNGGA_Process(shared_ptr<string> &msg, Nmea *nmea) {
   gga *v = (gga *)nmea->get("GGA");
 
   strncpy(v->time, tokens[1].c_str(), tokens[1].length());
-  v->lat = strtod(tokens[2].c_str(), nullptr);
+  v->Latitude = strtod(tokens[2].c_str(), nullptr);
   v->ns = *tokens[3].c_str();
-  v->lon = strtod(tokens[4].c_str(), nullptr);
+  v->Longitude = strtod(tokens[4].c_str(), nullptr);
   v->ew = *tokens[5].c_str();
   v->quality = strtol(tokens[6].c_str(), nullptr, 10);
   v->sat_num = (int)strtol(tokens[7].c_str(), nullptr, 10);
@@ -128,9 +128,9 @@ static void GNGLL_Process(shared_ptr<string> &msg, Nmea *nmea) {
 
   gll *v = (gll *)nmea->get("GLL");
 
-  v->lat = strtod(tokens[1].c_str(), nullptr);
+  v->Latitude = strtod(tokens[1].c_str(), nullptr);
   v->ns = *tokens[2].c_str();
-  v->lon = strtod(tokens[3].c_str(), nullptr);
+  v->Longitude = strtod(tokens[3].c_str(), nullptr);
   v->ew = *tokens[4].c_str();
   strncpy(v->time, tokens[5].c_str(), tokens[5].length());
   v->status = *tokens[6].c_str();
@@ -207,9 +207,9 @@ static void GNRMC_Process(shared_ptr<string> &msg, Nmea *nmea) {
 
   strncpy(v->time, tokens[1].c_str(), tokens[1].length());
   v->status = *tokens[2].c_str();
-  v->lat = strtod(tokens[3].c_str(), nullptr);
+  v->Latitude = strtod(tokens[3].c_str(), nullptr);
   v->ns = *tokens[4].c_str();
-  v->lon = strtod(tokens[5].c_str(), nullptr);
+  v->Longitude = strtod(tokens[5].c_str(), nullptr);
   v->ew = *tokens[6].c_str();
   v->speed = strtod(tokens[7].c_str(), nullptr);
   v->deg = strtod(tokens[8].c_str(), nullptr);

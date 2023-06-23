@@ -37,6 +37,7 @@ Nmea::Nmea()
 	data.insert(make_pair("VTG", malloc(sizeof (vtg))));
 	data.insert(make_pair("GLL", malloc(sizeof (gll))));
 	data.insert(make_pair("GSV", malloc(sizeof (gsv))));
+	data.insert(make_pair("GGA", malloc(sizeof (gga))));
 }
 
 Nmea::~Nmea() {
@@ -74,13 +75,11 @@ void *Nmea::get_data(const std::string &name)
 static bool nmea_checksum(const string &str)
 {
 	int sum = 0;
-
 	size_t start = str.find('*') + 1;
 
 	for (char ch : str) {
 		if (ch == '$')
 			continue;
-
 		if (ch == '*')
 			break;
 		if (ch != '\n') {
@@ -133,7 +132,27 @@ static void GNVTG_Process(std::shared_ptr<std::string> &msg, Nmea *nmea)
 
 static void GNGGA_Process(shared_ptr<string> &msg, Nmea *nmea)
 {
+	vector<string> tokens = split_string(msg->c_str());
 
+	if (tokens.empty())
+		return;
+
+	gga *v = (gga *)nmea->get_data("GGA");
+
+	strncpy(v->time, tokens[1].c_str(), tokens[1].length());
+	v->lat = strtod(tokens[2].c_str(), nullptr);
+	v->ns = *tokens[3].c_str();
+	v->lon = strtod(tokens[4].c_str(), nullptr);
+	v->ew = *tokens[5].c_str();
+	v->quality = strtol(tokens[6].c_str(), nullptr, 10);
+	v->sat_num = (int) strtol(tokens[7].c_str(), nullptr, 10);
+	v->horizontal = strtod(tokens[8].c_str(), nullptr);
+	v->ant_alt = strtod(tokens[9].c_str(), nullptr);
+	v->ant_units = *tokens[10].c_str();
+	v->geoidal = strtod(tokens[11].c_str(), nullptr);
+	v->geoiadl_units = *tokens[12].c_str();
+	v->age = strtod(tokens[13].c_str(), nullptr);
+	v->id = strtoul(tokens[14].c_str(), nullptr, 10);
 }
 static void GNGLL_Process(shared_ptr<string> &msg, Nmea *nmea)
 {
@@ -174,10 +193,12 @@ static void GPGSV_Process(shared_ptr<string> &msg, Nmea *nmea)
 
 	int group_count = (int)strtol(tokens[1].c_str(), nullptr, 10);
 	int group_index = (int)strtol(tokens[2].c_str(), nullptr, 10);
+	int sat_count = (int)strtol(tokens[3].c_str(), nullptr, 10);
+
 	int loop_count;
 	gsv *v = (gsv *)nmea->get_data("GSV");
 
-	v->sat_count = strtol(tokens[3].c_str(), nullptr, 10);
+	v->sat_count = sat_count;
 	v->group_count = group_count;
 
 	if ((group_count - group_index) == 0)

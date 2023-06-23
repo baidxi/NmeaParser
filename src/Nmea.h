@@ -44,6 +44,23 @@ struct gsv {
 	gsv_group group[4];
 };
 
+struct gga {
+	char time[12];
+	double lat;
+	char ns;
+	double lon;
+	char ew;
+	uint8_t quality;
+	uint8_t sat_num;
+	double horizontal;
+	double ant_alt;
+	char ant_units;
+	double geoidal;
+	char geoiadl_units;
+	double age;
+	uint16_t id;
+};
+
 class Nmea {
 	std::map<std::string, std::function<void(std::shared_ptr<std::string> &, Nmea *nmea)>> processor_map;
 	std::map<std::string, void *> data;

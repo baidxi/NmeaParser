@@ -68,7 +68,7 @@ public:
 	Nmea();
 	~Nmea();
 	int parse(std::shared_ptr<std::string> &msg);
-	void *get_data(const std::string &name);
+	void *get(const std::string &name);
 };
 
 #endif //GPS_UTILS_SRC_NMEA_H

@@ -62,7 +62,7 @@ int Nmea::parse(std::shared_ptr<std::string> &msg)
 	return 0;
 }
 
-void *Nmea::get_data(const std::string &name)
+void *Nmea::get(const std::string &name)
 {
 	auto ret = data.find(name);
 
@@ -98,7 +98,7 @@ static void GNVTG_Process(std::shared_ptr<std::string> &msg, Nmea *nmea)
 {
 	vector<string> tokens = split_string(msg->c_str());
 
-	vtg *v = (vtg *)nmea->get_data("VTG");
+	vtg *v = (vtg *) nmea->get("VTG");
 
 	v->deg1 = strtod(tokens[1].c_str(), nullptr);
 	v->deg2 = strtod(tokens[3].c_str(), nullptr);
@@ -110,7 +110,7 @@ static void GNGGA_Process(shared_ptr<string> &msg, Nmea *nmea)
 {
 	vector<string> tokens = split_string(msg->c_str());
 
-	gga *v = (gga *)nmea->get_data("GGA");
+	gga *v = (gga *) nmea->get("GGA");
 
 	strncpy(v->time, tokens[1].c_str(), tokens[1].length());
 	v->lat = strtod(tokens[2].c_str(), nullptr);
@@ -131,7 +131,7 @@ static void GNGLL_Process(shared_ptr<string> &msg, Nmea *nmea)
 {
 	vector<string> tokens = split_string(msg->c_str());
 
-	gll *v = (gll *)nmea->get_data("GLL");
+	gll *v = (gll *) nmea->get("GLL");
 
 	v->lat = strtod(tokens[1].c_str(), nullptr);
 	v->ns = *tokens[2].c_str();
@@ -154,7 +154,6 @@ static void BDGSA_Process(shared_ptr<string> &msg, Nmea *nmea)
 }
 static void GPGSV_Process(shared_ptr<string> &msg, Nmea *nmea)
 {
-	fprintf(stderr, "%s", msg->c_str());
 	auto tokens = split_string(msg->c_str());
 	int index = 0;
 
@@ -163,7 +162,7 @@ static void GPGSV_Process(shared_ptr<string> &msg, Nmea *nmea)
 	int sat_count = (int)strtol(tokens[3].c_str(), nullptr, 10);
 
 	int loop_count;
-	gsv *v = (gsv *)nmea->get_data("GSV");
+	gsv *v = (gsv *) nmea->get("GSV");
 
 	v->sat_count = sat_count;
 	v->group_count = group_count;

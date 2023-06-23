@@ -38,33 +38,16 @@ void GPS::run()
 		}
 		auto msg = mMsgs.front();
 
-		if (*msg->c_str() == '$') {
-			nmea->parse(msg);
-		}
+		nmea->parse(msg);
 
 		auto lock = std::lock_guard<std::mutex>(mutex);
 		mMsgs.pop();
-
-		gsv *v =(gsv *) nmea->get_data("GSV");
-		gsv_group *group;
-		gsv_info *info;
-
-		fprintf(stderr, "sat count:%d \n", v->sat_count);
-
-		for (int i = 0; i < v->group_count; i++) {
-			group = v->group + i;
-			for (int j = 0; j < group->num_info; ++j) {
-				info = group->infos + j;
-				fprintf(stderr, "sat num:%d deg1 = %d deg2 = %d SNR:%d\n",
-						info->sat_num, info->deg1, info->deg2, info->snr);
-			}
-		}
-
 	}
 
 	fprintf(stdout, "%s\n", what());
 }
-bool GPS::checksum(const std::string &str) {
+bool GPS::checksum(const std::string &str)
+{
 	int sum = 0;
 	size_t start = str.find('*') + 1;
 

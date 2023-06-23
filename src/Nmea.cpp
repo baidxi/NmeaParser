@@ -39,6 +39,7 @@ Nmea::Nmea() {
   data.insert(make_pair("GGA", malloc(sizeof(gga))));
   data.insert(make_pair("GSA", malloc(sizeof (gsa))));
   data.insert(make_pair("RMC", malloc(sizeof (rmc))));
+  data.insert(make_pair("ZDA", malloc(sizeof (zda))));
 }
 
 Nmea::~Nmea() {
@@ -186,7 +187,15 @@ static void GPGSV_Process(shared_ptr<string> &msg, Nmea *nmea) {
   }
 }
 static void GNZDA_Process(shared_ptr<string> &msg, Nmea *nmea) {
+  auto tokens = split_string(msg->c_str());
+  zda *v = (zda *)nmea->get("ZDA");
 
+  strncpy(v->time, tokens[1].c_str(), tokens[1].length());
+  v->day = (uint8_t)strtoul(tokens[2].c_str(), nullptr, 10);
+  v->mon = (uint8_t)strtoul(tokens[3].c_str(), nullptr, 10);
+  v->year = (uint16_t)strtoul(tokens[4].c_str(), nullptr, 10);
+  v->local_min_desc = (uint8_t)strtoul(tokens[5].c_str(), nullptr, 10);
+  v->local_zone_desc = (uint8_t)strtoul(tokens[6].c_str(), nullptr, 10);
 }
 static void GPTXT_Process(shared_ptr<string> &msg, Nmea *nmea) {
 

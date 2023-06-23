@@ -15,7 +15,7 @@ struct gll {
   char ns;
   double lon;
   char ew;
-  char time[12];
+  char time[32];
   char status;
 };
 
@@ -45,7 +45,7 @@ struct gsv {
 };
 
 struct gga {
-  char time[12];
+  char time[32];
   double lat;
   char ns;
   double lon;
@@ -71,7 +71,7 @@ struct gsa {
 };
 
 struct rmc {
-  char time[12];
+  char time[32];
   char status;
   double lat;
   char ns;
@@ -82,6 +82,15 @@ struct rmc {
   uint16_t date;
   double magnetic_variation;
   char variation_ew;
+};
+
+struct zda {
+  uint8_t local_min_desc;
+  uint8_t local_zone_desc;
+  uint8_t day;
+  uint8_t mon;
+  uint16_t year;
+  char time[32];
 };
 
 class Nmea {

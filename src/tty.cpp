@@ -92,9 +92,10 @@ void tty::loop_run()
 									buf[size - 2] = '\0';
 
 								auto msg = std::make_shared<std::string>(buf);
-								on_message(msg);
 								size = 0;
 								buf[size++] = buf1[j];
+								if (msg != nullptr)
+									on_message(msg);
 							}
 						}
 					}

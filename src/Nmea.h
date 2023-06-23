@@ -26,6 +26,24 @@ struct vtg {
 	double kph;
 };
 
+struct gsv_info {
+	uint32_t sat_num;
+	uint32_t deg1;
+	uint32_t deg2;
+	uint32_t snr;
+};
+
+struct gsv_group {
+	uint8_t num_info;
+	gsv_info infos[4];
+};
+
+struct gsv {
+	uint8_t sat_count;
+	uint8_t group_count;
+	gsv_group group[4];
+};
+
 class Nmea {
 	std::map<std::string, std::function<void(std::shared_ptr<std::string> &, Nmea *nmea)>> processor_map;
 	std::map<std::string, void *> data;

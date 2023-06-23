@@ -36,7 +36,7 @@ Nmea::Nmea()
 
 	data.insert(make_pair("VTG", malloc(sizeof (vtg))));
 	data.insert(make_pair("GLL", malloc(sizeof (gll))));
-
+	data.insert(make_pair("GSV", malloc(sizeof (gsv))));
 }
 
 Nmea::~Nmea() {
@@ -71,6 +71,26 @@ void *Nmea::get_data(const std::string &name)
 		return nullptr;
 }
 
+static bool nmea_checksum(const string &str)
+{
+	int sum = 0;
+
+	size_t start = str.find('*') + 1;
+
+	for (char ch : str) {
+		if (ch == '$')
+			continue;
+
+		if (ch == '*')
+			break;
+		if (ch != '\n') {
+			sum ^= ch;
+		}
+	}
+
+	return sum == strtol(str.substr(start).c_str(), nullptr, 16);
+}
+
 static vector<string>
 split_string(const string &str)
 {
@@ -78,14 +98,20 @@ split_string(const string &str)
 	size_t start = 0;
 	size_t end = str.find(',');
 
+	if (!nmea_checksum(str))
+		return tokens;
+
 	while(end != string::npos)
 	{
-		tokens.push_back(str.substr(start, end - start));
+		if ((end - start) == 0)
+			tokens.emplace_back("0");
+		else
+			tokens.emplace_back(str.substr(start, end - start));
 		start = end + 1;
 		end = str.find(',', start);
 	}
 
-	tokens.push_back(str.substr(start));
+	tokens.emplace_back(str.substr(start));
 
 	return tokens;
 }
@@ -93,6 +119,10 @@ split_string(const string &str)
 static void GNVTG_Process(std::shared_ptr<std::string> &msg, Nmea *nmea)
 {
 	vector<string> tokens = split_string(msg->c_str());
+
+	if (tokens.empty())
+		return;
+
 	vtg *v = (vtg *)nmea->get_data("VTG");
 
 	v->deg1 = strtod(tokens[1].c_str(), nullptr);
@@ -108,6 +138,10 @@ static void GNGGA_Process(shared_ptr<string> &msg, Nmea *nmea)
 static void GNGLL_Process(shared_ptr<string> &msg, Nmea *nmea)
 {
 	vector<string> tokens = split_string(msg->c_str());
+
+	if (tokens.empty())
+		return;
+
 	gll *v = (gll *)nmea->get_data("GLL");
 
 	v->lat = strtod(tokens[1].c_str(), nullptr);
@@ -131,7 +165,36 @@ static void BDGSA_Process(shared_ptr<string> &msg, Nmea *nmea)
 }
 static void GPGSV_Process(shared_ptr<string> &msg, Nmea *nmea)
 {
+	fprintf(stderr, "%s", msg->c_str());
+	auto tokens = split_string(msg->c_str());
+	int index = 0;
 
+	if (tokens.empty())
+		return;
+
+	int group_count = (int)strtol(tokens[1].c_str(), nullptr, 10);
+	int group_index = (int)strtol(tokens[2].c_str(), nullptr, 10);
+	int loop_count;
+	gsv *v = (gsv *)nmea->get_data("GSV");
+
+	v->sat_count = strtol(tokens[3].c_str(), nullptr, 10);
+	v->group_count = group_count;
+
+	if ((group_count - group_index) == 0)
+		loop_count = v->sat_count % group_count;
+	else
+		loop_count = 4;
+
+	gsv_group *group = v->group + (group_index - 1);
+	group->num_info = loop_count;
+
+	for (int i = 0; i < loop_count; ++i) {
+		index = 4 * (i + 1);
+		group->infos[i].sat_num = strtol(tokens[index + 0].c_str(), nullptr, 10);
+		group->infos[i].deg1 = strtol(tokens[index + 1].c_str(), nullptr, 10);
+		group->infos[i].deg2 = strtol(tokens[index + 2].c_str(), nullptr, 10);
+		group->infos[i].snr = strtol(tokens[index + 3].c_str(), nullptr, 10);
+	}
 }
 static void GNZDA_Process(shared_ptr<string> &msg, Nmea *nmea)
 {

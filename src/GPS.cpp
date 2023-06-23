@@ -64,3 +64,19 @@ void GPS::run()
 
 	fprintf(stdout, "%s\n", what());
 }
+bool GPS::checksum(const std::string &str) {
+	int sum = 0;
+	size_t start = str.find('*') + 1;
+
+	for (char ch : str) {
+		if (ch == '$')
+			continue;
+		if (ch == '*')
+			break;
+		if (ch != '\n') {
+			sum ^= ch;
+		}
+	}
+
+	return sum == strtol(str.substr(start).c_str(), nullptr, 16);
+}

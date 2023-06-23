@@ -72,33 +72,12 @@ void *Nmea::get_data(const std::string &name)
 		return nullptr;
 }
 
-static bool nmea_checksum(const string &str)
-{
-	int sum = 0;
-	size_t start = str.find('*') + 1;
-
-	for (char ch : str) {
-		if (ch == '$')
-			continue;
-		if (ch == '*')
-			break;
-		if (ch != '\n') {
-			sum ^= ch;
-		}
-	}
-
-	return sum == strtol(str.substr(start).c_str(), nullptr, 16);
-}
-
 static vector<string>
 split_string(const string &str)
 {
 	vector<string> tokens;
 	size_t start = 0;
 	size_t end = str.find(',');
-
-	if (!nmea_checksum(str))
-		return tokens;
 
 	while(end != string::npos)
 	{
@@ -119,9 +98,6 @@ static void GNVTG_Process(std::shared_ptr<std::string> &msg, Nmea *nmea)
 {
 	vector<string> tokens = split_string(msg->c_str());
 
-	if (tokens.empty())
-		return;
-
 	vtg *v = (vtg *)nmea->get_data("VTG");
 
 	v->deg1 = strtod(tokens[1].c_str(), nullptr);
@@ -133,9 +109,6 @@ static void GNVTG_Process(std::shared_ptr<std::string> &msg, Nmea *nmea)
 static void GNGGA_Process(shared_ptr<string> &msg, Nmea *nmea)
 {
 	vector<string> tokens = split_string(msg->c_str());
-
-	if (tokens.empty())
-		return;
 
 	gga *v = (gga *)nmea->get_data("GGA");
 
@@ -157,9 +130,6 @@ static void GNGGA_Process(shared_ptr<string> &msg, Nmea *nmea)
 static void GNGLL_Process(shared_ptr<string> &msg, Nmea *nmea)
 {
 	vector<string> tokens = split_string(msg->c_str());
-
-	if (tokens.empty())
-		return;
 
 	gll *v = (gll *)nmea->get_data("GLL");
 
@@ -187,9 +157,6 @@ static void GPGSV_Process(shared_ptr<string> &msg, Nmea *nmea)
 	fprintf(stderr, "%s", msg->c_str());
 	auto tokens = split_string(msg->c_str());
 	int index = 0;
-
-	if (tokens.empty())
-		return;
 
 	int group_count = (int)strtol(tokens[1].c_str(), nullptr, 10);
 	int group_index = (int)strtol(tokens[2].c_str(), nullptr, 10);

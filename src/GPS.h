@@ -17,6 +17,7 @@ class GPS : tty {
 	std::mutex mutex;
 public:
 	int on_message(std::shared_ptr<std::string> &msg) override;
+	bool checksum(const std::string &str) override;
 	explicit GPS(const std::string &device);
 	void run();
 	~GPS() override;

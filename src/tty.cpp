@@ -91,8 +91,13 @@ void tty::loop_run()
 								if (buf[size -2] == '\n')
 									buf[size - 2] = '\0';
 
-								auto msg = std::make_shared<std::string>(buf);
 								size = 0;
+
+								if (!checksum(buf))
+									continue;
+
+								auto msg = std::make_shared<std::string>(buf);
+
 								buf[size++] = buf1[j];
 								if (msg != nullptr)
 									on_message(msg);

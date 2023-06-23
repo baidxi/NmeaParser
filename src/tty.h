@@ -23,6 +23,7 @@ public:
 	virtual ~tty();
 protected:
 	virtual int on_message(std::shared_ptr<std::string> &msg) = 0;
+	virtual bool checksum(const std::string &str) = 0;
 };
 
 #endif //GPS_UTILS_SRC_TTY_H

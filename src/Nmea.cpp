@@ -96,6 +96,7 @@ static void GNVTG_Process(std::shared_ptr<std::string> &msg, Nmea *nmea) {
   vector<string> tokens = split_string(msg->c_str());
 
   vtg *v = (vtg *)nmea->get("VTG");
+  memset(v, 0, sizeof (*v));
 
   v->CourseTrue = strtod(tokens[1].c_str(), nullptr);
   v->CourseMagnetic = strtod(tokens[3].c_str(), nullptr);
@@ -107,6 +108,7 @@ static void GNGGA_Process(shared_ptr<string> &msg, Nmea *nmea) {
   vector<string> tokens = split_string(msg->c_str());
 
   gga *v = (gga *)nmea->get("GGA");
+  memset(v, 0, sizeof (*v));
 
   strncpy(v->time, tokens[1].c_str(), tokens[1].length());
   v->Latitude = strtod(tokens[2].c_str(), nullptr);
@@ -127,6 +129,7 @@ static void GNGLL_Process(shared_ptr<string> &msg, Nmea *nmea) {
   vector<string> tokens = split_string(msg->c_str());
 
   gll *v = (gll *)nmea->get("GLL");
+  memset(v, 0, sizeof (*v));
 
   v->Latitude = strtod(tokens[1].c_str(), nullptr);
   v->ns = *tokens[2].c_str();
@@ -139,6 +142,7 @@ static void GPGSA_Process(shared_ptr<string> &msg, Nmea *nmea) {
   vector<string> tokens = split_string(msg->c_str());
 
   gsa *v = (gsa *)nmea->get("GSA");
+  memset(v, 0, sizeof (*v));
 
   v->select_mode = *tokens[1].c_str();
   v->mode = *tokens[2].c_str();
@@ -166,6 +170,7 @@ static void GPGSV_Process(shared_ptr<string> &msg, Nmea *nmea) {
 
   int loop_count;
   gsv *v = (gsv *)nmea->get("GSV");
+  memset(v, 0, sizeof (*v));
 
   v->sat_count = sat_count;
   v->group_count = group_count;
@@ -189,6 +194,7 @@ static void GPGSV_Process(shared_ptr<string> &msg, Nmea *nmea) {
 static void GNZDA_Process(shared_ptr<string> &msg, Nmea *nmea) {
   auto tokens = split_string(msg->c_str());
   zda *v = (zda *)nmea->get("ZDA");
+  memset(v, 0, sizeof (*v));
 
   strncpy(v->time, tokens[1].c_str(), tokens[1].length());
   v->day = (uint8_t)strtoul(tokens[2].c_str(), nullptr, 10);
@@ -205,6 +211,7 @@ static void GNRMC_Process(shared_ptr<string> &msg, Nmea *nmea){
 
   auto tokens = split_string(msg->c_str());
   rmc *v = (rmc *)nmea->get("RMC");
+  memset(v, 0, sizeof (*v));
 
   strncpy(v->time, tokens[1].c_str(), tokens[1].length());
   v->status = *tokens[2].c_str();

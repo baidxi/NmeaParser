@@ -32,7 +32,7 @@ ui::ui(lv_coord_t w, lv_coord_t h) {
 }
 
 void ui::loop_run(GPS *gps) {
-  auto delay = std::chrono::duration<int, std::milli>(1 * 1000);
+  auto delay = std::chrono::duration<int, std::milli>(60);
   zda *tm = (zda *)gps->get("ZDA");
   gsv *info_gsv = (gsv *)gps->get("GSV");
   rmc *rmc_info = (rmc *)gps->get("RMC");

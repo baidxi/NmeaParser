@@ -21,9 +21,13 @@ public:
   [[nodiscard]] bool is_open() const;
   [[nodiscard]] const char *what() const;
   virtual ~tty();
+  [[nodiscard]] bool is_active() const {
+	return running;
+  }
 protected:
   virtual int on_message(std::shared_ptr<std::string> &msg) = 0;
   virtual bool checksum(const std::string &str) = 0;
+
 };
 
 #endif //GPS_UTILS_SRC_TTY_H

@@ -19,6 +19,12 @@ public:
   int on_message(std::shared_ptr<std::string> &msg) override;
   bool checksum(const std::string &str) override;
   explicit GPS(const std::string &device);
+  bool is_active() {
+	return tty::is_active();
+  }
+  void *get(const char *name) {
+	return nmea->get(name);
+  }
   void run();
   ~GPS() override;
 };

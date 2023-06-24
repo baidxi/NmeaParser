@@ -202,6 +202,7 @@ static void GPTXT_Process(shared_ptr<string> &msg, Nmea *nmea) {
 }
 
 static void GNRMC_Process(shared_ptr<string> &msg, Nmea *nmea){
+
   auto tokens = split_string(msg->c_str());
   rmc *v = (rmc *)nmea->get("RMC");
 
